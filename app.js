@@ -3,7 +3,6 @@ const app = express();
 
 let clients = [];
 
-// Helper function to broadcast the current time to all clients
 const broadcastTime = () => {
     const time = new Date().toLocaleTimeString();
     clients.forEach(client => {
@@ -11,18 +10,14 @@ const broadcastTime = () => {
     });
 };
 
-// Set an interval to broadcast the time every second
 setInterval(broadcastTime, 1000);
 
 app.get('/getHour', (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
-
     res.write(`${new Date().toLocaleTimeString()} | `);
-
     clients.push(res);
-
     req.on('close', () => {
         clients = clients.filter(client => client !== res);
     });
